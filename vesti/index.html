@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1e3a5f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Vesti - Seu Armário Digital</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- TELA INICIO -->
+  <section id="tela-inicio" class="tela ativa">
+    <header class="home-header">
+      <div class="saudacao" id="saudacao">Bom dia! ☀️</div>
+      <h1 class="home-titulo">O que vamos vestir hoje?</h1>
+    </header>
+
+    <div class="indicadores">
+      <div class="indicador-card">
+        <span class="indicador-numero" id="indicador-pecas">0</span>
+        <span class="indicador-label">Peças</span>
+      </div>
+      <div class="indicador-card">
+        <span class="indicador-numero" id="indicador-looks">0</span>
+        <span class="indicador-label">Looks</span>
+      </div>
+      <div class="indicador-card">
+        <span class="indicador-numero" id="indicador-favoritos">0</span>
+        <span class="indicador-label">Favoritas</span>
+      </div>
+    </div>
+
+    <div class="atalhos">
+      <button class="atalho-card" onclick="navegarPara('tela-looks')">
+        <span class="atalho-icone">✨</span>
+        <span class="atalho-titulo">Montar um look</span>
+      </button>
+      <button class="atalho-card" onclick="navegarPara('tela-armario')">
+        <span class="atalho-icone">👗</span>
+        <span class="atalho-titulo">Meu armário</span>
+      </button>
+      <button class="atalho-card" onclick="gerarSugestaoDoDia()">
+        <span class="atalho-icone">💡</span>
+        <span class="atalho-titulo">Sugestão do dia</span>
+      </button>
+      <button class="atalho-card" onclick="abrirFormularioPeca()">
+        <span class="atalho-icone">➕</span>
+        <span class="atalho-titulo">Adicionar peça</span>
+      </button>
+    </div>
+
+    <div class="secao-sugestao" id="secao-sugestao" style="display:none;">
+      <h2 class="secao-titulo">Sugestão do dia</h2>
+      <div class="sugestao-card" id="sugestao-card"></div>
+    </div>
+  </section>
+
+  <!-- TELA ARMARIO -->
+  <section id="tela-armario" class="tela">
+    <header class="page-header">
+      <h2 class="page-titulo">Meu Armário</h2>
+      <button class="btn-flutuante" onclick="abrirFormularioPeca()" aria-label="Adicionar peça">+</button>
+    </header>
+
+    <div class="filtros-scroll">
+      <button class="filtro-btn ativo" data-filtro="todas" onclick="filtrarPecas('todas')">Todas</button>
+      <button class="filtro-btn" data-filtro="Blusas" onclick="filtrarPecas('Blusas')">Blusas</button>
+      <button class="filtro-btn" data-filtro="Calças" onclick="filtrarPecas('Calças')">Calças</button>
+      <button class="filtro-btn" data-filtro="Vestidos" onclick="filtrarPecas('Vestidos')">Vestidos</button>
+      <button class="filtro-btn" data-filtro="Casacos" onclick="filtrarPecas('Casacos')">Casacos</button>
+      <button class="filtro-btn" data-filtro="Calçados" onclick="filtrarPecas('Calçados')">Calçados</button>
+      <button class="filtro-btn" data-filtro="Acessórios" onclick="filtrarPecas('Acessórios')">Acessórios</button>
+    </div>
+
+    <div class="grade-pecas" id="grade-pecas">
+      <!-- Preenchido via JS -->
+    </div>
+
+    <div class="vazio" id="armario-vazio" style="display:none;">
+      <p>Seu armário está vazio.</p>
+      <p>Adicione sua primeira peça!</p>
+    </div>
+  </section>
+
+  <!-- TELA LOOKS -->
+  <section id="tela-looks" class="tela">
+    <header class="page-header">
+      <h2 class="page-titulo">Montar Look</h2>
+    </header>
+
+    <div class="look-form">
+      <label class="look-label">Ocasião</label>
+      <div class="look-opcoes" id="opcoes-ocasiao">
+        <button class="look-opcao" data-ocasiao="Casual" onclick="selecionarOpcao('ocasiao', 'Casual', this)">Casual</button>
+        <button class="look-opcao" data-ocasiao="Faculdade" onclick="selecionarOpcao('ocasiao', 'Faculdade', this)">Faculdade</button>
+        <button class="look-opcao" data-ocasiao="Trabalho" onclick="selecionarOpcao('ocasiao', 'Trabalho', this)">Trabalho</button>
+        <button class="look-opcao" data-ocasiao="Festa" onclick="selecionarOpcao('ocasiao', 'Festa', this)">Festa</button>
+        <button class="look-opcao" data-ocasiao="Encontro" onclick="selecionarOpcao('ocasiao', 'Encontro', this)">Encontro</button>
+      </div>
+
+      <label class="look-label">Clima</label>
+      <div class="look-opcoes" id="opcoes-clima">
+        <button class="look-opcao" data-clima="Quente" onclick="selecionarOpcao('clima', 'Quente', this)">☀️ Quente</button>
+        <button class="look-opcao" data-clima="Ameno" onclick="selecionarOpcao('clima', 'Ameno', this)">🌤️ Ameno</button>
+        <button class="look-opcao" data-clima="Frio" onclick="selecionarOpcao('clima', 'Frio', this)">🌧️ Frio</button>
+      </div>
+
+      <button class="btn-principal" onclick="gerarLook()">Gerar Look</button>
+    </div>
+
+    <div class="look-resultado" id="look-resultado" style="display:none;">
+      <h3 class="look-nome" id="look-nome"></h3>
+      <div class="look-pecas" id="look-pecas"></div>
+      <button class="btn-principal" onclick="gerarLook()">Gerar outro look</button>
+      <button class="btn-secundario" onclick="salvarLook()">Salvar look</button>
+    </div>
+
+    <div class="look-salvados">
+      <h3 class="secao-titulo">Looks salvos</h3>
+      <div class="grade-looks" id="grade-looks"></div>
+      <div class="vazio" id="looks-vazio" style="display:none;">
+        <p>Nenhum look salvo ainda.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TELA PERFIL -->
+  <section id="tela-perfil" class="tela">
+    <header class="page-header">
+      <h2 class="page-titulo">Perfil</h2>
+    </header>
+
+    <div class="perfil-card">
+      <div class="perfil-avatar">👤</div>
+      <h3 class="perfil-nome">Meu Armário</h3>
+      <p class="perfil-sub">Organize suas peças com estilo</p>
+    </div>
+
+    <div class="estatisticas">
+      <div class="estatistica">
+        <span class="estatistica-numero" id="stat-pecas">0</span>
+        <span class="estatistica-label">Peças cadastradas</span>
+      </div>
+      <div class="estatistica">
+        <span class="estatistica-numero" id="stat-favoritas">0</span>
+        <span class="estatistica-label">Peças favoritas</span>
+      </div>
+      <div class="estatistica">
+        <span class="estatistica-numero" id="stat-looks">0</span>
+        <span class="estatistica-label">Looks criados</span>
+      </div>
+      <div class="estatistica">
+        <span class="estatistica-numero" id="stat-categorias">0</span>
+        <span class="estatistica-label">Categorias</span>
+      </div>
+    </div>
+
+    <div class="configuracoes">
+      <h3 class="secao-titulo">Configurações</h3>
+      <button class="config-btn" onclick="exportarDados()">📥 Exportar dados</button>
+      <button class="config-btn" onclick="importarDados()">📤 Importar dados</button>
+      <button class="config-btn perigo" onclick="limparDados()">🗑️ Limpar todos os dados</button>
+    </div>
+  </section>
+
+  <!-- MODAL ADICIONAR PECA -->
+  <div class="modal-overlay" id="modal-overlay" onclick="fecharFormularioPeca(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Adicionar Peça</h3>
+        <button class="modal-fechar" onclick="fecharFormularioPeca()">&times;</button>
+      </div>
+      <form id="form-peca" onsubmit="salvarPeca(event)">
+        <label class="form-label">Nome da peça</label>
+        <input type="text" class="form-input" id="peca-nome" placeholder="Ex: Camiseta branca" required>
+
+        <label class="form-label">Categoria</label>
+        <select class="form-select" id="peca-categoria" required>
+          <option value="">Selecione...</option>
+          <option value="Blusas">Blusas</option>
+          <option value="Calças">Calças</option>
+          <option value="Vestidos">Vestidos</option>
+          <option value="Casacos">Casacos</option>
+          <option value="Calçados">Calçados</option>
+          <option value="Acessórios">Acessórios</option>
+        </select>
+
+        <label class="form-label">Cor</label>
+        <select class="form-select" id="peca-cor" required>
+          <option value="">Selecione...</option>
+          <option value="Branco">Branco</option>
+          <option value="Preto">Preto</option>
+          <option value="Cinza">Cinza</option>
+          <option value="Azul">Azul</option>
+          <option value="Vermelho">Vermelho</option>
+          <option value="Verde">Verde</option>
+          <option value="Amarelo">Amarelo</option>
+          <option value="Rosa">Rosa</option>
+          <option value="Laranja">Laranja</option>
+          <option value="Roxo">Roxo</option>
+          <option value="Marrom">Marrom</option>
+          <option value="Bege">Bege</option>
+        </select>
+
+        <label class="form-label">Imagem (URL ou deixe em branco)</label>
+        <input type="url" class="form-input" id="peca-imagem" placeholder="https://exemplo.com/imagem.jpg">
+
+        <div class="form-preview" id="form-preview"></div>
+
+        <button type="submit" class="btn-principal">Salvar peça</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL SUGESTAO DO DIA -->
+  <div class="modal-overlay" id="modal-sugestao-overlay" onclick="fecharSugestao(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Sugestão do Dia</h3>
+        <button class="modal-fechar" onclick="fecharSugestao()">&times;</button>
+      </div>
+      <div id="sugestao-conteudo"></div>
+    </div>
+  </div>
+
+  <!-- NAVEGACAO INFERIOR -->
+  <nav class="nav-inferior" id="nav-inferior">
+    <button class="nav-item ativo" data-tela="tela-inicio" onclick="navegarPara('tela-inicio')">
+      <span class="nav-icone">🏠</span>
+      <span class="nav-label">Início</span>
+    </button>
+    <button class="nav-item" data-tela="tela-armario" onclick="navegarPara('tela-armario')">
+      <span class="nav-icone">👗</span>
+      <span class="nav-label">Armário</span>
+    </button>
+    <button class="nav-item" data-tela="tela-looks" onclick="navegarPara('tela-looks')">
+      <span class="nav-icone">✨</span>
+      <span class="nav-label">Looks</span>
+    </button>
+    <button class="nav-item" data-tela="tela-perfil" onclick="navegarPara('tela-perfil')">
+      <span class="nav-icone">👤</span>
+      <span class="nav-label">Perfil</span>
+    </button>
+  </nav>
+
+  <input type="file" id="input-importar" accept=".json" style="display:none" onchange="processarImportacao(event)">
+
+  <script src="script.js"></script>
+</body>
+</html>
